@@ -77,16 +77,12 @@ Below is a high-level workflow to run DifCoRank on your dataset. More detailed i
    - **Hub Gene Ranks**: CSV files listing genes by average centrality rank.  
    - **Figures**: Plots of UMAP embeddings, DBSCAN clusters, and adjacency histograms.
 
----
-
-### Repository Structure
-
 
 ### Citation
 
 ### License
 
-This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute this software under the license terms.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -103,8 +99,5 @@ For questions, bug reports, or feature requests, please open an issue in this re
 ### Acknowledgments
 
 - This research was conducted at Michigan State University’s Department of Electrical & Computer Engineering, Department of Biomedical Engineering, and the Institute for Quantitative Health Science & Engineering.
-- We gratefully acknowledge all contributors and funding sources (to be listed in your published article’s Acknowledgements section).
 
----
 
-*Thank you for using DiffCoRank! We hope it advances your research into differential gene co-expression and the discovery of hub genes in tissue response studies.*
