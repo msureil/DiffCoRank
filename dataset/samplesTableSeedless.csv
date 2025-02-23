@@ -1,0 +1,37 @@
+﻿sample,source,TP,subject,hemisphere,source.TP,source.subject,source.hemisphere,TP.subject
+Sample_134203,near,hrs24,R25,left,near.hrs24,near.R25,near.left,hrs24.R25
+Sample_134204,far,hrs24,R25,left,far.hrs24,far.R25 ,far.left,hrs24.R25
+Sample_134205,near,hrs24,R25,right,near.hrs24,near.R25,near.right,hrs24.R25
+Sample_134206,far,hrs24,R25,right,far.hrs24,far.R25 ,far.right,hrs24.R25
+Sample_134207,near,hrs24,R29,left,near.hrs24,near.R29,near.left,hrs24.R29
+Sample_134208,far,hrs24,R29,left,far.hrs24,far.R29 ,far.left,hrs24.R29
+Sample_134209,near,hrs24,R29,right,near.hrs24,near.R29,near.right,hrs24.R29
+Sample_134210,far,hrs24,R29,right,far.hrs24,far.R29 ,far.right,hrs24.R29
+Sample_134211,near,hrs24,R30,left,near.hrs24,near.R30,near.left,hrs24.R30
+Sample_134212,far,hrs24,R30,left,far.hrs24,far.R30 ,far.left,hrs24.R30
+Sample_134213,near,hrs24,R30,right,near.hrs24,near.R30,near.right,hrs24.R30
+Sample_134214,far,hrs24,R30,right,far.hrs24,far.R30 ,far.right,hrs24.R30
+Sample_134215,near,oneWk,R9,right,near.oneWk,near.R9 ,near.right,oneWk.R9
+Sample_134216,far,oneWk,R9,right,far.oneWk,far.R9  ,far.right,oneWk.R9
+Sample_134217,near,oneWk,R10,right,near.oneWk,near.R10,near.right,oneWk.R10
+Sample_134218,far,oneWk,R10,right,far.oneWk,far.R10 ,far.right,oneWk.R10
+Sample_134219,near,oneWk,R20,left,near.oneWk,near.R20,near.left,oneWk.R20
+Sample_134220,far,oneWk,R20,left,far.oneWk,far.R20 ,far.left,oneWk.R20
+Sample_134221,near,oneWk,R22,right,near.oneWk,near.R22,near.right,oneWk.R22
+Sample_134222,far,oneWk,R22,right,far.oneWk,far.R22 ,far.right,oneWk.R22
+Sample_134223,near,oneWk,R23,left,near.oneWk,near.R23,near.left,oneWk.R23
+Sample_134224,far,oneWk,R23,left,far.oneWk,far.R23 ,far.left,oneWk.R23
+Sample_134225,near,oneWk,R23,right,near.oneWk,near.R23,near.right,oneWk.R23
+Sample_134226,far,oneWk,R23,right,far.oneWk,far.R23 ,far.right,oneWk.R23
+Sample_134227,near,sixWk,R2,left,near.sixWk,near.R2 ,near.left,sixWk.R2
+Sample_134228,far,sixWk,R2,left,far.sixWk,far.R2  ,far.left,sixWk.R2
+Sample_134229,near,sixWk,R11,left,near.sixWk,near.R11,near.left,sixWk.R11
+Sample_134230,far,sixWk,R11,left,far.sixWk,far.R11 ,far.left,sixWk.R11
+Sample_134231,near,sixWk,R17,left,near.sixWk,near.R17,near.left,sixWk.R17
+Sample_134232,far,sixWk,R17,left,far.sixWk,far.R17 ,far.left,sixWk.R17
+Sample_134233,near,sixWk,R17,right,near.sixWk,near.R17,near.right,sixWk.R17
+Sample_134234,far,sixWk,R17,right,far.sixWk,far.R17 ,far.right,sixWk.R17
+Sample_134235,near,sixWk,R19,left,near.sixWk,near.R19,near.left,sixWk.R19
+Sample_134236,far,sixWk,R19,left,far.sixWk,far.R19 ,far.left,sixWk.R19
+Sample_134237,near,sixWk,R19,right,near.sixWk,near.R19,near.right,sixWk.R19
+Sample_134238,far,sixWk,R19,right,far.sixWk,far.R19,far.right,sixWk.R19
