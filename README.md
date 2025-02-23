@@ -17,6 +17,9 @@
 - **Hybrid Clustering** using UMAP + DBSCAN  
 - **Multi-criteria Hub Gene Ranking** with centrality metrics (degree, closeness, betweenness, eigenvector)
 
+  ![Flowchart](https://github.com/user-attachments/assets/263d36ee-6eb8-488b-b527-ab2bc3b42ff1)
+
+
 This repository accompanies our paper:  
 > Chakraborty, A., Purcell, E.K., & Moore, M.G. *DifCoRank: A Comprehensive Framework for Discovering Hub Genes and Differential Gene Co-expression in Brain Implant-Associated Tissue Responses*. (Under Review in BMC Bioinformatics, 2025).
 
