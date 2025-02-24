@@ -10,7 +10,7 @@
 
 ### Overview
 
-**DifCoRank** is an integrated framework to identify differentially coexpressed gene modules and prioritize key regulators (hub genes) associated with tissue responses to implanted devices. The pipeline combines:
+**DiffCoRank** is an integrated framework to identify differentially coexpressed gene modules and prioritize key regulators (hub genes) associated with tissue responses to implanted devices. The pipeline combines:
 
 - **RNA-Seq Data Preprocessing & Gene Filtering**  
 - **Correlation-Based Module Identification**  
@@ -21,7 +21,7 @@
 
 
 This repository accompanies our paper:  
-> Chakraborty, A., Purcell, E.K., & Moore, M.G. *DifCoRank: A Comprehensive Framework for Discovering Hub Genes and Differential Gene Co-expression in Brain Implant-Associated Tissue Responses*. (Under Review in BMC Bioinformatics, 2025).
+> Chakraborty, A., Purcell, E.K., & Moore, M.G. *DiffCoRank: A Comprehensive Framework for Discovering Hub Genes and Differential Gene Co-expression in Brain Implant-Associated Tissue Responses*. (Under Review in BMC Bioinformatics, 2025).
 
 ---
 
