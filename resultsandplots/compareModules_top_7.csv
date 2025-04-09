@@ -1,0 +1,6 @@
+identifier,size,medianDegree,maxDegree,correlatedCondition,hubGene
+1,106,19.624899999999997,28.225,N/A,Trmt1l
+0,395,88.9866,139.2105,N/A,Dhx40
+2,405,136.3385,192.9536,N/A,Trim25
+4,459,154.0619,256.6646,N/A,Slc25a19
+3,357,132.6791,196.192,N/A,Atp6v0e1
