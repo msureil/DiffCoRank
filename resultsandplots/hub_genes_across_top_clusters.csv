@@ -1,8 +1,9 @@
 top_0,top_1,top_2,top_3,top_4,top_5,top_6,top_7,top_8
-Trmt1l,Gabrg2,Psmb1,Psmb1,Psmb1,Psmb1,Tm7sf3,Trmt1l,Psmb1
-Hps4,Psmb1,Tm7sf3,Tm7sf3,Tm7sf3,Tm7sf3,Trmt1l,Dhx40,Tm7sf3
-Trim25,Tm7sf3,Cacnb1,Trim25,Rwdd2b,Cacnb1,Vash2,Trim25,Trim25
-Slc25a19,Cacnb1,Slc25a19,Slc25a19,Slc25a19,Slc25a19,Cacnb1,Slc25a19,Slc25a19
-Atp6v0e1,Slc25a19,Atp6v0e1,Atp6v0e1,Atp6v0e1,Atp6v0e1,Slc25a19,Atp6v0e1,Atp6v0e1
-Snrk,Atp6v0e1,Trim25,,,Trim25,Atp6v0e1,,
-,Trim25,,,,,Trim25,,
+Tm7sf3,Tm7sf3,Tm7sf3,Tm7sf3,Trim25,Trim25,Tm7sf3,Tm7sf3,RT1-M3-1
+Cacnb1,Cacnb1,Trmt1l,Trmt1l,Trmt1l,Trmt1l,Trmt1l,Trmt1l,Daam1
+Trmt1l,Trmt1l,Vash2,Vash2,Hps4,Hps4,Txndc15,Txndc15,Zfp692
+Rps4x,Rps4x,Cacnb1,Cacnb1,Cacnb1,Cacnb1,Cacnb1,Cacnb1,Cacnb1
+Trim25,Trim25,Rnf10,Rnf10,Snrk,Snrk,Rnf10,Rnf10,Tm7sf3
+Rnf10,Rnf10,Rps4x,Rps4x,Rnf10,Rnf10,Atp6v0e1,Atp6v0e1,Vash2
+Vash2,Vash2,Trim25,Trim25,Atp6v0e1,Atp6v0e1,Vash2,Vash2,Dhx40
+,,,,Slc49a4,Slc49a4,,,Tm7sf3
