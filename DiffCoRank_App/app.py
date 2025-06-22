@@ -466,9 +466,9 @@ if st.session_state.clustering_done:
                     _ = analyze_module(st.session_state.modsSC, m, st.session_state.final_data, st.session_state.adSC, mod_dir)
             
             summary_file = os.path.join(mod_dir, "hub_genes_list.csv")
-            write_compare_modules(mod_dir, summary_file)
+            
 
-            summary_df = pd.read_csv(summary_file)
+            summary_df = write_compare_modules(mod_dir)
 
             if 'identifier' in summary_df.columns:
 
@@ -484,5 +484,13 @@ if st.session_state.clustering_done:
             styled_df = display_df.style.set_properties(**{'text-align': 'center'})
             st.dataframe(styled_df, hide_index=True)
             full_mod_dir = os.path.abspath(mod_dir)
-            st.success("✔ All module files and the List of the hub genes have been saved to the directory below:")
-            st.code(full_mod_dir, language='bash')
+            st.success("✔ Full Analysis Complete.")
+            csv_output = summary_df.to_csv(index=False).encode('utf-8')
+
+            st.download_button(
+            label="📥 Download Full Hub Gene List (CSV)",
+            data=csv_output,
+            file_name="hub_summary.csv",
+            mime="text/csv",
+            )
+            

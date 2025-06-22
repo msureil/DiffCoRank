@@ -457,7 +457,7 @@ def analyze_module(mods, module_num, data_main, adSC, out_dir):
     return df
 
 
-def write_compare_modules(csv_directory, output_file):
+def write_compare_modules(csv_directory):
     files = glob.glob(f'{csv_directory}/module_*.csv')
     summary = {
         'identifier': [], 'size': [], 'medianDegree': [],
@@ -476,7 +476,7 @@ def write_compare_modules(csv_directory, output_file):
         summary['correlatedCondition'].append('N/A')
         summary['hubGene'].append(hub)
 
-    pd.DataFrame(summary).to_csv(output_file, index=False)
+    return pd.DataFrame(summary)
 
 
 def plot_to_bytes(fig) -> bytes:
