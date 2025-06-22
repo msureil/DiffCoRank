@@ -1,9 +1,5 @@
 # diffcorank_core.py
-"""
-Core library for DiffCoRank analysis pipeline.
-Provides data filtering, correlation computation, module detection,
-and network-based hub gene analysis without any UI dependencies.
-"""
+
 
 import os
 import json
@@ -31,38 +27,34 @@ def column_filter_loc(df_to_filter: pd.DataFrame,
                       group_col: str,
                       group_val: str,
                       sample_col: str) -> pd.DataFrame:
-    """
-    Keep columns of df_to_filter where metadata[group_col] == group_val.
-    """
+
     samples = metadata.loc[metadata[group_col] == group_val, sample_col]
     cols = df_to_filter.columns.intersection(samples)
     return df_to_filter.loc[:, cols]
 
-# Backward compatibility alias
+
 columnFilter_loc = column_filter_loc
 
 
 def split_batches(gene_ids: list, batch_size: int):
-    """Yield slices of gene_ids of length batch_size."""
+
     for i in range(0, len(gene_ids), batch_size):
         yield gene_ids[i:i + batch_size]
 
 
-# ----------------------------
+
 def fetch_gene_data_batch(batch: list,
                           url: str,
                           headers: dict) -> list:
-    """
-    Fetch metadata for a batch of gene IDs from Ensembl REST API.
-    """
+    
     data = {"ids": batch}
     resp = requests.post(url, json=data, headers=headers)
     results = []
     if resp.ok:
-        # Ensure we have a dict, even if resp.json() is None
+        
         info = resp.json() or {}
         for gid in batch:
-            # Coerce missing entries to empty dict
+   
             g = info.get(gid) or {}
             length = abs(g.get('end', 0) - g.get('start', 0))
             results.append({
@@ -82,7 +74,6 @@ def fetch_gene_data_batch(batch: list,
                 'length': None
             })
     return results
-# ----------------------------
 
 
 
@@ -91,9 +82,7 @@ def fetch_data_concurrently(gene_ids: list,
                             max_workers: int = 10,
                             url: str = 'https://rest.ensembl.org/lookup/id',
                             headers: dict = None) -> pd.DataFrame:
-    """
-    Retrieve gene metadata for all gene_ids in parallel.
-    """
+
     if headers is None:
         headers = {'Content-Type': 'application/json'}
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
@@ -392,7 +381,7 @@ def density_cluster(umap_embedding, eps, min_samples, min_mod_size):
     for m in unique_labels:
         cluster_size = np.sum(mods == m)
         if cluster_size <= min_mod_size:
-            mods[mods == m] = -1  #Mark these points as noise
+            mods[mods == m] = -1  
 
     merge0=True
     if merge0:
@@ -480,9 +469,7 @@ def write_compare_modules(csv_directory):
 
 
 def plot_to_bytes(fig) -> bytes:
-    """
-    Serialize a Matplotlib figure to bytes for download.
-    """
+
     buf = BytesIO()
     fig.savefig(buf, format='png')
     buf.seek(0)

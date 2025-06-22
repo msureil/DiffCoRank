@@ -6,7 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from io import BytesIO
 
-# Import core functions
+
 from diffcorank_core import (
     columnFilter_loc, fetch_data_concurrently, update_extName,
     filter_data_by_iteration, generate_non_zero_mask,
@@ -17,29 +17,27 @@ from diffcorank_core import (
     analyze_module, write_compare_modules
 )
 
-# Cache metadata fetch to avoid re-fetching
+
 @st.cache_data
 def fetch_metadata(gene_ids):
     return fetch_data_concurrently(gene_ids)
 
-# Initialize session state flags
 for flag in ['filtered','correlation_done','scg_done','clustering_done']:
     if flag not in st.session_state:
         st.session_state[flag] = False
 
 
-# Page config
+
 st.set_page_config(
     page_title="DiffCoRank",
     page_icon="🧬",
     layout="wide"
 )
 
-# Main title of the app
+
 st.title("DiffCoRank")
 st.subheader("An Interactive Pipeline for Differential Co-expression Analysis")
 
-#About Section
 st.sidebar.header("About")
 st.sidebar.markdown("""
 **Developed by:** Anirban Chakraborty<br>
@@ -92,7 +90,7 @@ if not (rlog_file and raw_file and sample_file):
     st.info("Please upload all three files to proceed with the analysis.")
     st.stop()
 
-# Load data only once
+
 rlog   = pd.read_csv(rlog_file, sep=None, engine='python', index_col=0)
 raw    = pd.read_csv(raw_file, sep=None, engine='python', index_col=0)
 sample = pd.read_csv(sample_file)
@@ -104,7 +102,6 @@ nc2 = columnFilter_loc(rlog, sample, 'source', 'near', 'sample')  # Normalized C
 rc1 = columnFilter_loc(raw, sample, 'source', 'far', 'sample')  # Raw Count for 'far'
 rc2 = columnFilter_loc(raw, sample, 'source', 'near', 'sample')  # Raw Count for 'near'
 
-#Stored in data dictionary.
 data = {
     "name": name,
     "extName": name,
@@ -117,20 +114,20 @@ data = {
 st.success("Data loaded and partitioned successfully.")
 st.write(f"**Initial gene count:** {len(data['name'])}")
 
-# --- Metadata Fetch and Download ---
+
 with st.spinner("Fetching gene metadata..."):
     #gene_df = fetch_metadata(data['name'])
     gene_df = pd.read_csv('ensembl_gene_info_batch_filtered.csv')
 st.success(f"Fetched metadata for {len(gene_df)} genes.")
 
-# Download metadata button
+
 meta_csv = gene_df.to_csv(index=False).encode('utf-8')
 st.download_button(
     label="Download gene metadata", data=meta_csv,
     file_name="gene_metadata.csv", mime="text/csv"
 )
 
-# --- Filter Parameters ---
+
 st.subheader("Filter Stage")
 st.write("Adjust filter parameters in the left and click 'Run Filtering' to proceed.")
 
@@ -143,7 +140,7 @@ min_len       = st.sidebar.number_input("Min gene length (bp)", 50, 1000, 100)
 cor_fdr_levels= st.sidebar.multiselect("FDR levels to compute", [0.1,0.5,0.9], default=[0.1,0.5,0.9])
 
 if st.sidebar.button("Run Filtering"):  
-    # Filtering pipeline
+
     updated_data = update_extName(data, gene_df)
     updated_data_new = {
         "name": gene_df['id'].tolist(),
@@ -163,7 +160,6 @@ if st.sidebar.button("Run Filtering"):
         'nc2': len(updated_data_new['nc2']),
     }
 
-    # Checking if all lengths are equal
     if len(set(lengths.values())) != 1:
         st.warning("Mismatch detected in data field lengths", icon="⚠️")
 
@@ -270,8 +266,7 @@ if st.session_state.filtered:
 
         
     
-        # --- Correlation Exploration ---
-    # Plot histograms of significant correlations per gene
+ 
     st.subheader("Significant Correlations Distribution")
     cstar10 = results['FDR_thresholds'][0.1]['cstar']
     cstar50 = results['FDR_thresholds'][0.5]['cstar']
@@ -295,7 +290,7 @@ if st.session_state.filtered:
 
         st.pyplot(fig2)
 
-    # Scatter plot comparing connectivity
+
     st.subheader("Connectivity Scatter Plot (50% vs 10% FDR)")
     fig3, ax3 = plt.subplots()
     ax3.scatter(sum2, sum1, s=1)
@@ -306,7 +301,7 @@ if st.session_state.filtered:
     
     st.subheader("FDR Thresholds")
 
-    # Prepare data for the table
+
     table_data = []
     for lvl in cor_fdr_levels:
         thr = results['FDR_thresholds'].get(lvl, {})
@@ -319,14 +314,13 @@ if st.session_state.filtered:
             "Correlation (c*)": f"{corr_value:.3f}" 
         })
 
-    # Create a DataFrame and display it as a static table
+
     if table_data:
         summary_df = pd.DataFrame(table_data)
         st.table(summary_df.set_index("FDR Level"))
     else:
         st.warning("FDR threshold data is not available.")
 
-    # SCG threshold selection
     st.subheader("Select the Minimum number of correlations for SCG")
 
     def sync_number_input():
@@ -395,7 +389,7 @@ if st.session_state.scg_done:
     st.subheader("Now Proceed to Clustering Stage")
     st.write("Adjust Clustering parameters in the left and click 'Run Clustering' to proceed.")
     
-    # Sidebar: clustering parameters
+
     st.sidebar.divider()
     st.sidebar.header("Clustering Parameters")
     umap_n_neighbors = st.sidebar.slider("UMAP n_neighbors", 1, 20, 4)
@@ -434,7 +428,7 @@ if st.session_state.clustering_done:
             plt.ylabel("UMAP2")
             st.pyplot(fig)
 
-    # In your "Modules" tab
+
     with tabs[2]:
         with st.spinner("Running DBSCAN to find modules..."):
             modsSC = density_cluster(st.session_state.umapSC, eps=eps, min_samples=min_samples, min_mod_size=min_mod_size)
@@ -457,40 +451,50 @@ if st.session_state.clustering_done:
             st.pyplot(fig)
 
     # Hub Summary
+    # Hub Summary
     with tabs[3]:
-        with st.spinner("Analyzing modules and identifying hub genes..."):
-            mod_dir = "resultsandplots/modules"
-            os.makedirs(mod_dir, exist_ok=True)
-            for m in np.unique(st.session_state.modsSC):
-                if m >= 0:
-                    _ = analyze_module(st.session_state.modsSC, m, st.session_state.final_data, st.session_state.adSC, mod_dir)
-            
-            summary_file = os.path.join(mod_dir, "hub_genes_list.csv")
-            
-
-            summary_df = write_compare_modules(mod_dir)
-
-            if 'identifier' in summary_df.columns:
-
-                summary_df['identifier'] = summary_df['identifier'] + 1
+        
+        if 'summary_df' not in st.session_state:
+            with st.spinner("Analyzing modules and identifying hub genes..."):
+                mod_dir = "resultsandplots/modules"
+                os.makedirs(mod_dir, exist_ok=True)
+                for m in np.unique(st.session_state.modsSC):
+                    if m >= 0:
+                        _ = analyze_module(st.session_state.modsSC, m, st.session_state.final_data, st.session_state.adSC, mod_dir)
                 
-                
-                summary_df.rename(columns={'identifier': 'Module Number'}, inplace=True)
-            else:
-                st.warning("Warning: 'identifier' column not found in summary file. Cannot rename or re-index.")
+                summary_file = os.path.join(mod_dir, "hub_genes_list.csv")
+                write_compare_modules(mod_dir, summary_file)
 
-            columns_to_display = ['Module Number', 'hubGene']
-            display_df = summary_df[columns_to_display]
+                
+                st.session_state.summary_df = pd.read_csv(summary_file)
+
+        st.subheader("Hub Gene Summary")
+        summary_df_to_display = st.session_state.summary_df.copy()
+
+        if 'identifier' in summary_df_to_display.columns:
+            summary_df_to_display['Module Number'] = summary_df_to_display['identifier'] + 1
+            summary_df_to_display.rename(columns={'identifier': 'Original ID'}, inplace=True) # Renamed to avoid confusion
+        
+
+        columns_to_display = ['Module Number', 'hubGene']
+        if all(col in summary_df_to_display.columns for col in columns_to_display):
+            display_df = summary_df_to_display[columns_to_display]
             styled_df = display_df.style.set_properties(**{'text-align': 'center'})
             st.dataframe(styled_df, hide_index=True)
-            full_mod_dir = os.path.abspath(mod_dir)
-            st.success("✔ Full Analysis Complete.")
-            csv_output = summary_df.to_csv(index=False).encode('utf-8')
+        else:
+            st.warning("Could not find 'Module Number' or 'hubGene' columns to display.")
+            st.dataframe(summary_df_to_display)
 
-            st.download_button(
+
+        st.success("✔ Full Analysis Complete.")
+        
+
+        csv_output = st.session_state.summary_df.to_csv(index=False).encode('utf-8')
+
+        st.download_button(
             label="📥 Download Full Hub Gene List (CSV)",
             data=csv_output,
             file_name="hub_summary.csv",
             mime="text/csv",
-            )
+        )
             
