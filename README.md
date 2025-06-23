@@ -32,6 +32,54 @@ This repository accompanies our paper:
 - **Network Centrality-Based Hub Detection**: Ranks genes by multiple centrality criteria, revealing key regulators of tissue responses.
 
 ---
+## Quick Start with Docker
+
+1. **Pull the official image from docker hub**  
+   ```bash
+   docker pull anirban1231/diffcorank:latest
+2. **Run the container**
+    ```bash
+    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+3. **Open in your browser**
+    Navigate to: http://localhost:8501
+
+4. **Stop & remove**
+    ```bash
+   docker stop diffcorank_app
+   docker rm  diffcorank_app
+---
+## 💻 Platform-Specific Instructions
+
+1.  Linux (Ubuntu/Debian)
+    ```bash 
+    # Install Docker
+    sudo apt update
+    sudo apt install -y docker.io
+    sudo systemctl enable --now docker
+
+    # (Optional) Manage permissions
+    sudo usermod -aG docker $USER
+    # Log out & back in, or run: newgrp docker
+
+    # Pull & run
+    docker pull anirban1231/diffcorank:latest
+    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+
+2.  macOS
+    - Install Docker Desktop from https://www.docker.com/products/docker-desktop
+    - Open Terminal:
+    ```bash
+    docker pull anirban1231/diffcorank:latest
+    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+
+  -Browse to http://localhost:8501
+4.  Windows
+    - Install Docker Desktop from https://www.docker.com/products/docker-desktop
+    - Open PowerShell (Admin):
+    ```bash
+    docker pull anirban1231/diffcorank:latest
+    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+    - Visit http://localhost:8501
 
 ### License
 
