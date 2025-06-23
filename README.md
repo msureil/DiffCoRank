@@ -66,20 +66,21 @@ This repository accompanies our paper:
     docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
 
 2.  macOS
-    - Install Docker Desktop from https://www.docker.com/products/docker-desktop
-    - Open Terminal:
+    Install Docker Desktop from https://www.docker.com/products/docker-desktop
+    Open Terminal:
     ```bash
     docker pull anirban1231/diffcorank:latest
     docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
 
-  -Browse to http://localhost:8501
+    Browse to http://localhost:8501
 4.  Windows
-    - Install Docker Desktop from https://www.docker.com/products/docker-desktop
-    - Open PowerShell (Admin):
+    Install Docker Desktop from https://www.docker.com/products/docker-desktop
+    Open PowerShell (Admin):
     ```bash
     docker pull anirban1231/diffcorank:latest
     docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
-    - Visit http://localhost:8501
+
+    Visit http://localhost:8501
 
 ### License
 
