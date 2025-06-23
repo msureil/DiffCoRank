@@ -5,6 +5,9 @@ import os
 import networkx as nx
 import matplotlib.pyplot as plt
 from io import BytesIO
+import time
+import shutil
+import streamlit.components.v1 as components
 
 
 from diffcorank_core import (
@@ -16,17 +19,6 @@ from diffcorank_core import (
     compute_adjacency, quick_umap, density_cluster,
     analyze_module, write_compare_modules
 )
-
-
-@st.cache_data
-def fetch_metadata(gene_ids):
-    return fetch_data_concurrently(gene_ids)
-
-for flag in ['filtered','correlation_done','scg_done','clustering_done']:
-    if flag not in st.session_state:
-        st.session_state[flag] = False
-
-
 
 st.set_page_config(
     page_title="DiffCoRank",
@@ -47,6 +39,16 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.link_button("GitHub Repo 🐱", "https://github.com/msureil/DiffCoRank")
+
+
+
+@st.cache_data
+def fetch_metadata(gene_ids):
+    return fetch_data_concurrently(gene_ids)
+
+for flag in ['filtered','correlation_done','scg_done','clustering_done']:
+    if flag not in st.session_state:
+        st.session_state[flag] = False
 
 
 with st.container(border=True):
@@ -131,15 +133,32 @@ st.download_button(
 st.subheader("Filter Stage")
 st.write("Adjust filter parameters in the left and click 'Run Filtering' to proceed.")
 
-st.sidebar.divider() 
-st.sidebar.header("Gene Filter Parameters")
-min_raw_count = st.sidebar.slider("Min Raw Counts threshold", 0, 300, 100)
-min_normalized_count = st.sidebar.slider("Min Normalized Counts threshold", 0, 10, 0)
-min_samp      = st.sidebar.slider("Min samples per gene", 1, 20, 3)
-min_len       = st.sidebar.number_input("Min gene length (bp)", 50, 1000, 100)
-cor_fdr_levels= st.sidebar.multiselect("FDR levels to compute", [0.1,0.5,0.9], default=[0.1,0.5,0.9])
 
-if st.sidebar.button("Run Filtering"):  
+st.sidebar.divider()
+
+with st.sidebar.form("filter_form"):
+    st.header("Gene Filter Parameters")
+    min_raw_count        = st.slider(
+        "Min Raw Counts threshold", 0, 300, 100
+    )
+    min_normalized_count = st.slider(
+        "Min Normalized Counts threshold", 0, 10, 0
+    )
+    min_samp             = st.slider(
+        "Min samples per gene", 1, 20, 3
+    )
+    min_len              = st.number_input(
+        "Min gene length (bp)", 50, 1000, 100
+    )
+    cor_fdr_levels       = st.multiselect(
+        "FDR levels to compute",
+        [0.1, 0.5, 0.9],
+        default=[0.1, 0.5]
+    )
+
+    run_filter = st.form_submit_button("Run Filtering")
+
+if run_filter:  
 
     updated_data = update_extName(data, gene_df)
     updated_data_new = {
@@ -248,6 +267,7 @@ if st.session_state.filtered:
         genes_removed.insert(0, np.nan)
         
         summary_df["Genes Removed in Step"] = genes_removed
+  
         styled_df = summary_df.style.format({'Genes Remaining': '{:,}','Genes Removed in Step': lambda x: "—" if pd.isna(x) else f'{x:,.0f}'}).set_properties(**{'text-align': 'right'}, subset=['Genes Remaining', 'Genes Removed in Step'])
         st.table(styled_df)
         
@@ -290,7 +310,7 @@ if st.session_state.filtered:
 
         st.pyplot(fig2)
 
-
+  
     st.subheader("Connectivity Scatter Plot (50% vs 10% FDR)")
     fig3, ax3 = plt.subplots()
     ax3.scatter(sum2, sum1, s=1)
@@ -298,7 +318,7 @@ if st.session_state.filtered:
     ax3.set_ylabel("Number of correlations above 10% FDR")
     st.pyplot(fig3)
 
-    
+   
     st.subheader("FDR Thresholds")
 
 
@@ -322,62 +342,62 @@ if st.session_state.filtered:
         st.warning("FDR threshold data is not available.")
 
     st.subheader("Select the Minimum number of correlations for SCG")
-
-    def sync_number_input():
-        """When the slider changes, this function updates the number input's value."""
+  
+    def sync_to_num():
         st.session_state.scg_num_input = st.session_state.scg_slider
 
-    def sync_slider():
-        """When the number input changes, this function updates the slider's value."""
+    def sync_to_slider():
         st.session_state.scg_slider = st.session_state.scg_num_input
 
 
     if 'scg_slider' not in st.session_state:
-        st.session_state.scg_slider = 200
-        st.session_state.scg_num_input = 200
+        st.session_state.scg_slider           = 200
+        st.session_state.scg_num_input        = 200
+        st.session_state.sc_threshold_applied = False
 
 
-    col1, col2 = st.columns([3, 1])
-
-  
+    col1, col2 = st.columns([3,1])
     with col1:
         st.slider(
             "Min connections for SCG",
-            min_value=1,
-            max_value=800,
-            key="scg_slider",        
-            on_change=sync_number_input, 
+            1, 800,
+            key="scg_slider",
+            on_change=sync_to_num,
             label_visibility="collapsed"
         )
-
     with col2:
         st.number_input(
             "Value",
-            min_value=1,
-            max_value=800,
-            key="scg_num_input",     
-            on_change=sync_slider,   
+            1, 800,
+            key="scg_num_input",
+            on_change=sync_to_slider,
             label_visibility="collapsed"
         )
 
-    
-    sc_threshold = st.session_state.scg_slider
-    st.write(f"The selected correlation threshold is: **{sc_threshold}** for 50% FDR")
 
-    if st.button("Run Strongly Connected Genes Selection"):
-        corrs = {
-        'C1': results['C1_corr'], 'C2': results['C2_corr']}
+    if st.button("Apply Threshold"):
+        st.session_state.sc_threshold     = st.session_state.scg_slider
+        st.session_state.sc_threshold_applied = True
 
-        testSC = find_strongly_connected_genes(
-            corrs,
-            cstar10,
-            cstar50,
-            sc_threshold
-        )
-        corrsSC = find_strongly_connected_genes_subset(corrs, testSC)
-        st.session_state.testSC = testSC
-        st.session_state.corrsSC = corrsSC
-        st.session_state.scg_done = True
+
+    if st.session_state.sc_threshold_applied:
+        sc_threshold = st.session_state.sc_threshold
+        st.success(f"The selected correlation threshold is: **{sc_threshold}** for 50% FDR")
+
+        if st.button("Run Strongly Connected Genes Selection"):
+            corrs = {
+            'C1': results['C1_corr'], 'C2': results['C2_corr']}
+
+            testSC = find_strongly_connected_genes(
+                corrs,
+                cstar10,
+                cstar50,
+                sc_threshold
+            )
+            corrsSC = find_strongly_connected_genes_subset(corrs, testSC)
+            st.session_state.testSC = testSC
+            st.session_state.corrsSC = corrsSC
+            st.session_state.scg_done = True
 
 # After SCG selection
 if st.session_state.scg_done:
@@ -388,113 +408,201 @@ if st.session_state.scg_done:
 
     st.subheader("Now Proceed to Clustering Stage")
     st.write("Adjust Clustering parameters in the left and click 'Run Clustering' to proceed.")
-    
 
     st.sidebar.divider()
-    st.sidebar.header("Clustering Parameters")
-    umap_n_neighbors = st.sidebar.slider("UMAP n_neighbors", 1, 20, 4)
-    umap_min_dist    = st.sidebar.number_input("UMAP min_dist", 0.00, 0.10, 0.005,0.001,format="%.3f")
-    eps              = st.sidebar.number_input("DBSCAN eps", 0.1, 1.0, 0.25, 0.1)
-    min_samples      = st.sidebar.number_input("DBSCAN min_samples", 1, 40, 14)
-    min_mod_size     = st.sidebar.number_input("Min module size", 1, 70, 50)
-    if st.sidebar.button("Run Clustering Pipeline"):
-        st.session_state.clustering_done = True
-    
-# Clustering stage
-if st.session_state.clustering_done:
-    tabs = st.tabs(["Adjacency & TOM","UMAP","Modules","Hub Summary"])
+    with st.sidebar.form("clustering_form"):
+        st.header("Clustering Parameters")
+        umap_n_neighbors = st.slider(
+            "UMAP n_neighbors", 1, 20, 4
+        )
+        umap_min_dist = st.number_input(
+            "UMAP min_dist", 0.00, 0.10, 0.005, 0.001, format="%.3f"
+        )
+        eps = st.number_input(
+            "DBSCAN eps", 0.1, 1.0, 0.25, 0.1
+        )
+        min_samples = st.number_input(
+            "DBSCAN min_samples", 1, 40, 14
+        )
+        min_mod_size = st.number_input(
+            "Min module size", 1, 70, 50
+        )
+        run_clustering = st.form_submit_button("Run Clustering Pipeline")
 
-    # Adjacency & TOM
-    with tabs[0]:
-        with st.spinner("Computing Adjacency and TOM Distance (This will take some moment. Sit tight!)..."):
-            adSC = compute_adjacency(st.session_state.corrsSC, cap=1, threshold=0.03)
+    if run_clustering:
+        st.session_state.clustering_done = True
+        st.success("Clustering Pipeline Started Successfully 🎉")
+    
+if "download_done" not in st.session_state:
+    st.session_state.download_done = False
+
+
+@st.cache_data(show_spinner=False)
+def get_adjacency(corrsSC, cap=1, threshold=0.03):
+    return compute_adjacency(corrsSC, cap=cap, threshold=threshold)
+
+if st.session_state.clustering_done:
+    # initialize wizard step
+    if "clust_step" not in st.session_state:
+        st.session_state.clust_step = 0
+
+    step = st.session_state.clust_step
+
+    # --- STEP 0: Adjacency & TOM ---
+    if step == 0:
+        st.header("Step 1: Adjacency & TOM Distance")
+        with st.spinner("Mapping connections. This is the most computationally intensive step, please wait!.…"):
+            pbar = st.progress(0)
+            for pct in range(0, 40):
+                pbar.progress(pct+1); time.sleep(0.03)
+            adSC = get_adjacency(st.session_state.corrsSC)
             st.session_state.adSC = adSC
+            for pct in range(40, 100):
+                pbar.progress(pct+1); time.sleep(0.005)
+            pbar.empty()
+
             fig = plt.figure()
-            plt.hist(np.log(adSC['Adj'][adSC['Adj']>0].flatten()), bins=100)
+            plt.hist(
+                np.log(adSC['Adj'][adSC['Adj']>0].flatten()),
+                bins=100
+            )
+            plt.title("Histogram of log-transformed adjacency")
+            st.pyplot(fig)
+
+        if st.button("→ Next: UMAP"):
+            st.session_state.clust_step += 1
+            st.rerun()
+
+    # --- STEP 1: UMAP ---
+    elif step == 1:
+        st.header("Step 2: UMAP of Strongly Connected Genes")
+        umapSC = quick_umap(
+            st.session_state.adSC['TOMdist'],
+            n_neighbors=umap_n_neighbors,
+            min_dist=umap_min_dist
+        )
+        st.session_state.umapSC = umapSC
+
+        fig = plt.figure()
+        plt.scatter(umapSC['x'], umapSC['y'], s=6)
+        plt.title("UMAP (TOM Distance)")
+        st.pyplot(fig)
+
+        cols = st.columns([1,1,1])
+        if cols[0].button("← Back"):
+            st.session_state.clust_step -= 1; st.rerun()
+        if cols[2].button("→ Next: Modules"):
+            st.session_state.clust_step += 1; st.rerun()
+
+    # --- STEP 2: DBSCAN Modules ---
+    elif step == 2:
+        st.header("Step 3: DBSCAN Module Detection")
+        modsSC = density_cluster(
+            st.session_state.umapSC,
+            eps=eps,
+            min_samples=min_samples,
+            min_mod_size=min_mod_size
+        )
+        st.session_state.modsSC = modsSC
+
+        fig, ax = plt.subplots()
+        for m in np.unique(modsSC):
+            pts = st.session_state.umapSC[modsSC == m]
+            label = f"{m+1}" if m >= 0 else "Noise"
+            ax.scatter(pts['x'], pts['y'], s=6, label=label)
+        ax.legend(markerscale=2)
+        st.pyplot(fig)
+
+        cols = st.columns([1,1,1])
+        if cols[0].button("← Back"):
+            st.session_state.clust_step -= 1; st.rerun()
+        if cols[2].button("→ Next: Hub Summary"):
+            st.session_state.clust_step += 1; st.rerun()
+
+    # --- STEP 3: Hub Summary & Download / Reset ---
+    elif step == 3:
+        
+
+
+        with st.expander("🔍 View Step 1: Adjacency & TOM", expanded=False):
+            adSC = st.session_state.adSC
+            fig = plt.figure()
+            plt.hist(
+                np.log(adSC['Adj'][adSC['Adj'] > 0].flatten()),
+                bins=100
+            )
             plt.title("Histogram of log-transformed adjacency values")
             plt.xlabel("Log(adj)")
             plt.ylabel("Frequency")
             st.pyplot(fig)
 
-    # UMAP
-    with tabs[1]:
-        with st.spinner("Running UMAP..."):
-            umapSC = quick_umap(st.session_state.adSC['TOMdist'], n_neighbors=umap_n_neighbors, min_dist=umap_min_dist)
-            st.session_state.umapSC = umapSC
+        # 2️⃣ UMAP
+        with st.expander("🔍 View Step 2: UMAP", expanded=False):
+            umapSC = st.session_state.umapSC
             fig = plt.figure()
             plt.scatter(umapSC['x'], umapSC['y'], s=6)
-            plt.title("UMAP of Strongly Connected Genes (TOM Distance)")
+            plt.title("UMAP of Strongly Connected Genes")
             plt.xlabel("UMAP1")
             plt.ylabel("UMAP2")
             st.pyplot(fig)
 
-
-    with tabs[2]:
-        with st.spinner("Running DBSCAN to find modules..."):
-            modsSC = density_cluster(st.session_state.umapSC, eps=eps, min_samples=min_samples, min_mod_size=min_mod_size)
-            st.session_state.modsSC = modsSC
+        # 3️⃣ Modules (DBSCAN)
+        with st.expander("🔍 View Step 3: Module Clustering", expanded=False):
+            modsSC = st.session_state.modsSC
+            umapSC = st.session_state.umapSC
             fig, ax = plt.subplots()
-            unique_mods = np.unique(modsSC)
-            
-            
-            for mod_id in unique_mods:
-                label = f"{mod_id + 1}" if mod_id != -1 else "Noise"
-                subset = st.session_state.umapSC[modsSC == mod_id]
-                ax.scatter(subset['x'], subset['y'], label=label, s=6)
-                
-            ax.set_title('DBSCAN Clustering of Strongly Connected Genes')
-            ax.set_xlabel('UMAP1')
-            ax.set_ylabel('UMAP2')
+            for m in np.unique(modsSC):
+                pts = umapSC[modsSC == m]
+                label = f"{m+1}" if m >= 0 else "Noise"
+                ax.scatter(pts['x'], pts['y'], s=6, label=label)
             ax.legend(markerscale=2)
-            
-            plt.tight_layout()
+            ax.set_title("DBSCAN Clustering of SCGs")
+            ax.set_xlabel("UMAP1")
+            ax.set_ylabel("UMAP2")
             st.pyplot(fig)
+        st.header("Step 4: Hub Gene Summary")
 
-    # Hub Summary
-    # Hub Summary
-    with tabs[3]:
-        
+        if st.session_state.get("download_done", False):
+            st.success("Download complete! 🎉")
+
+
+
         if 'summary_df' not in st.session_state:
-            with st.spinner("Analyzing modules and identifying hub genes..."):
+            with st.spinner("Analyzing modules…"):
                 mod_dir = "resultsandplots/modules"
                 os.makedirs(mod_dir, exist_ok=True)
                 for m in np.unique(st.session_state.modsSC):
                     if m >= 0:
-                        _ = analyze_module(st.session_state.modsSC, m, st.session_state.final_data, st.session_state.adSC, mod_dir)
-                
-                summary_file = os.path.join(mod_dir, "hub_genes_list.csv")
-                write_compare_modules(mod_dir, summary_file)
-
-                
-                st.session_state.summary_df = pd.read_csv(summary_file)
-
-        st.subheader("Hub Gene Summary")
-        summary_df_to_display = st.session_state.summary_df.copy()
-
-        if 'identifier' in summary_df_to_display.columns:
-            summary_df_to_display['Module Number'] = summary_df_to_display['identifier'] + 1
-            summary_df_to_display.rename(columns={'identifier': 'Original ID'}, inplace=True) # Renamed to avoid confusion
-        
-
-        columns_to_display = ['Module Number', 'hubGene']
-        if all(col in summary_df_to_display.columns for col in columns_to_display):
-            display_df = summary_df_to_display[columns_to_display]
-            styled_df = display_df.style.set_properties(**{'text-align': 'center'})
-            st.dataframe(styled_df, hide_index=True)
-        else:
-            st.warning("Could not find 'Module Number' or 'hubGene' columns to display.")
-            st.dataframe(summary_df_to_display)
+                        analyze_module(
+                            st.session_state.modsSC,
+                            m,
+                            st.session_state.final_data,
+                            st.session_state.adSC,
+                            mod_dir
+                        )
+                st.session_state.summary_df = write_compare_modules(mod_dir)
 
 
-        st.success("✔ Full Analysis Complete.")
-        
+        df = st.session_state.summary_df.copy()
+        if 'identifier' in df:
+            df['Module Number'] = df['identifier']+1
+        st.dataframe(df[['Module Number','hubGene']], hide_index=True)
 
-        csv_output = st.session_state.summary_df.to_csv(index=False).encode('utf-8')
-
-        st.download_button(
-            label="📥 Download Full Hub Gene List (CSV)",
-            data=csv_output,
+        csv_bytes = df.to_csv(index=False).encode()
+        if st.download_button(
+            "📥 Download Full Hub Gene List (CSV)",
+            data=csv_bytes,
             file_name="hub_summary.csv",
-            mime="text/csv",
-        )
-            
+            key="hub_download"
+        ):
+            st.session_state.download_done = True
+            st.success("Download complete! 🎉")
+
+ 
+        with st.expander("⚠️ Danger Zone", expanded=False):
+            if st.button("🔄 Reset All", key="reset_final"):
+                st.session_state.clear()
+                shutil.rmtree("resultsandplots/modules", ignore_errors=True)
+                st.rerun()
+
+
