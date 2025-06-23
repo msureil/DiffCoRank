@@ -143,7 +143,110 @@ docker run -d -p 8501:8501 \
   anirban1231/diffcorank:latest
 ```
 
+## 📚 User Guide
+
+Follow these steps to load your data, run the full DiffCoRank pipeline, and see your results.
+
 ---
+
+### 1. Prepare Your Input Files
+
+- **Rlog Normalized Counts (CSV/TXT)**  
+  A matrix of log-transformed, normalized expression values.  
+  - **Rows:** Gene IDs  
+  - **Columns:** Sample names  
+- **Raw Counts (CSV/TXT)**  
+  Your original raw gene-count matrix.  
+  - Same shape and sample order as the Rlog file.  
+- **Sample Metadata (CSV)**  
+  Metadata linking each sample to an experimental condition.  
+  - Must contain at least two columns:  
+    1. `sample` (matching the column names in your counts files)  
+    2. `source` (e.g. "near" / "far")
+
+---
+
+### 2. Launch the App
+
+```bash
+# If you're using Docker:
+docker pull anirban1231/diffcorank:latest
+docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+open http://localhost:8501
+```
+
+Or run locally:
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+---
+
+### 3. Upload Your Data
+
+1. In the **Upload Your Data** section:
+   * Drag & drop (or click) to upload:
+     * **Rlog Normalized Counts**
+     * **Raw Counts**
+     * **Sample Metadata**
+2. Once all three files appear, the **Run Filtering** button will activate.
+
+---
+
+### 4. Filter Stage
+
+1. In the sidebar under **Gene Filter Parameters**, adjust:
+   * **Min Raw Counts threshold**
+   * **Min Normalized Counts threshold**
+   * **Min samples per gene**
+   * **Min gene length (bp)**
+2. Click **Run Filtering**.
+3. Review the **Filtering Summary** table showing the number of genes kept/excluded.
+
+---
+
+### 5. Correlation & SCG Selection
+
+1. View **Significant Correlations Distribution** histograms at your chosen FDR levels.
+2. In **Connectivity Scatter Plot**, drag to inspect the spread.
+3. Under **Select the Minimum number of correlations for SCG**:
+   * Drag the slider or type a number.
+   * Click **Apply Threshold** to lock it in.
+   * Click **Run Strongly Connected Genes Selection**.
+4. You'll see the count and percentage of SCGs.
+
+---
+
+### 6. Clustering Wizard
+
+Use the **Next** and **Back** buttons to step through:
+
+* **Step 1: Adjacency & TOM**
+  The progress bar displays adjacency and TOM computation.
+* **Step 2: UMAP**
+  Visualise SCGs in 2D.
+* **Step 3: DBSCAN Modules**
+  Identify colored modules with DBSCAN.
+* **Step 4: Hub Gene Summary**
+  Review and export your hub-gene list.
+
+---
+
+### 7. Export & Reset
+
+* In **Step 4**, click **📥 Download Full Hub Gene List (CSV)** to save your results.
+* When you're done, open the **⚠️ Danger Zone** expander and click **🔄 Reset All** to clear state and start over.
+
+---
+
+### 🎥 Video Tutorial
+
+Watch the full walkthrough here:
+👉 [DiffCoRank Tutorial](https://youtu.be/YOUR_VIDEO_ID)
+---
+
 
 ## 📖 Additional Resources
 
