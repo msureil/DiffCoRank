@@ -119,7 +119,9 @@ st.write(f"**Initial gene count:** {len(data['name'])}")
 
 with st.spinner("Fetching gene metadata..."):
     #gene_df = fetch_metadata(data['name'])
-    gene_df = pd.read_csv('ensembl_gene_info_batch_filtered.csv')
+    BASE_DIR = os.path.dirname(__file__)
+    gene_df = pd.read_csv(os.path.join(BASE_DIR, 'ensembl_gene_info_batch_filtered.csv'))
+    #gene_df = pd.read_csv('ensembl_gene_info_batch_filtered.csv')
 st.success(f"Fetched metadata for {len(gene_df)} genes.")
 
 
