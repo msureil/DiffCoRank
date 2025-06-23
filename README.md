@@ -32,55 +32,127 @@ This repository accompanies our paper:
 - **Network Centrality-Based Hub Detection**: Ranks genes by multiple centrality criteria, revealing key regulators of tissue responses.
 
 ---
+# 🐳 DiffCoRank Docker Deployment Guide
+
 ## Quick Start with Docker
 
-1. **Pull the official image from docker hub**  
+Follow these steps to get DiffCoRank up and running using Docker.
+
+1. **Pull the official image from Docker Hub**  
    ```bash
    docker pull anirban1231/diffcorank:latest
+   ```
+
 2. **Run the container**
-    ```bash
-    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+   ```bash
+   docker run -d -p 8501:8501 \
+     --name diffcorank_app \
+     anirban1231/diffcorank:latest
+   ```
+
 3. **Open in your browser**
-    Navigate to: http://localhost:8501
+   Navigate to:
+   ```
+   http://localhost:8501
+   ```
 
 4. **Stop & remove**
-    ```bash
+   ```bash
    docker stop diffcorank_app
-   docker rm  diffcorank_app
+   docker rm diffcorank_app
+   ```
+
 ---
+
 ## 💻 Platform-Specific Instructions
 
-1.  Linux (Ubuntu/Debian)
-    ```bash 
-    # Install Docker
-    sudo apt update
-    sudo apt install -y docker.io
-    sudo systemctl enable --now docker
+### 🐧 Linux (Ubuntu/Debian)
+```bash
+# Install Docker
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable --now docker
 
-    # (Optional) Manage permissions
-    sudo usermod -aG docker $USER
-    # Log out & back in, or run: newgrp docker
+# (Optional) Allow your user to run Docker without sudo
+sudo usermod -aG docker $USER
+# Log out & back in, or run:
+newgrp docker
 
-    # Pull & run
-    docker pull anirban1231/diffcorank:latest
-    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+# Pull & run DiffCoRank
+docker pull anirban1231/diffcorank:latest
+docker run -d -p 8501:8501 \
+  --name diffcorank_app \
+  anirban1231/diffcorank:latest
+```
 
-2.  macOS
-    Install Docker Desktop from https://www.docker.com/products/docker-desktop
-    Open Terminal:
-    ```bash
-    docker pull anirban1231/diffcorank:latest
-    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+### 🍎 macOS
+1. Download and install **Docker Desktop** from
+   [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+2. Open **Terminal** and run:
+   ```bash
+   docker pull anirban1231/diffcorank:latest
+   docker run -d -p 8501:8501 \
+     --name diffcorank_app \
+     anirban1231/diffcorank:latest
+   ```
+3. Browse to:
+   ```
+   http://localhost:8501
+   ```
 
-    Browse to http://localhost:8501
-4.  Windows
-    Install Docker Desktop from https://www.docker.com/products/docker-desktop
-    Open PowerShell (Admin):
-    ```bash
-    docker pull anirban1231/diffcorank:latest
-    docker run -d -p 8501:8501 --name diffcorank_app anirban1231/diffcorank:latest
+### ⊞ Windows
+#### Docker Desktop (Recommended)
+1. Install **Docker Desktop** from
+   [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+2. Open **PowerShell** as Administrator and run:
+   ```powershell
+   docker pull anirban1231/diffcorank:latest
+   docker run -d -p 8501:8501 `
+     --name diffcorank_app `
+     anirban1231/diffcorank:latest
+   ```
+3. Visit:
+   ```
+   http://localhost:8501
+   ```
 
-    Visit http://localhost:8501
+#### WSL2 Integration
+1. Ensure **WSL2** is installed and Docker Desktop is configured to use the WSL2 engine
+2. In your WSL2 distribution shell:
+   ```bash
+   docker pull anirban1231/diffcorank:latest
+   docker run -d -p 8501:8501 \
+     --name diffcorank_app \
+     anirban1231/diffcorank:latest
+   ```
+3. Open `http://localhost:8501` in your Windows browser
+
+---
+
+## ⚙️ Local Build & Development (Optional)
+```bash
+git clone https://github.com/msureil/DiffCoRank.git
+cd DiffCoRank/DiffCoRank_App
+
+# Build & tag
+docker build -t anirban1231/diffcorank:latest .
+
+# Run
+docker run -d -p 8501:8501 \
+  --name diffcorank_app \
+  anirban1231/diffcorank:latest
+```
+
+---
+
+## 📖 Additional Resources
+
+- **Requirements**: Python 3.8+, Streamlit, pandas, numpy, networkx, matplotlib
+- **Configuration**: Customize theme or port in `.streamlit/config.toml`
+- **Troubleshooting**:
+  - Permission errors on Linux? Add user to `docker` group
+  - Windows issues? Ensure virtualization is enabled in BIOS
+  - Port conflict? Change `8501` to another port in both commands
 
 ### License
 
