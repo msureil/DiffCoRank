@@ -241,10 +241,11 @@ Use the **Next** and **Back** buttons to step through:
 
 ---
 
-### 🎥 Video Tutorial
+## 🎥 Video Tutorial
 
-Watch the full walkthrough here:
-👉 [DiffCoRank Tutorial](https://youtu.be/YOUR_VIDEO_ID)
+[![DiffCoRank User Manual](https://img.youtube.com/vi/xfu7GI95Nlo/0.jpg)](https://youtu.be/xfu7GI95Nlo)
+
+▶️ [Watch Full Tutorial on YouTube](https://youtu.be/xfu7GI95Nlo)
 ---
 
 
