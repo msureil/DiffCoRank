@@ -21,8 +21,9 @@
 
 
 This repository accompanies our paper:  
-> Chakraborty, A., Purcell, E.K., & Moore, M.G. *DiffCoRank: A Comprehensive Framework for Discovering Hub Genes and Differential Gene Co-expression in Brain Implant-Associated Tissue Responses*. (Under Review in BMC Bioinformatics, 2025).
+> Chakraborty, A., Purcell, E.K. & Moore, M.G. DiffCoRank: a comprehensive framework for discovering hub genes and differential gene co-expression in brain implant-associated tissue responses. BMC Bioinformatics 26, 191 (2025). https://doi.org/10.1186/s12859-025-06232-y
 
+Full Text Available here: https://rdcu.be/eyoGv 
 ---
 
 ### Features
