@@ -256,7 +256,7 @@ Use the **Next** and **Back** buttons to step through:
 - **Configuration**: Customize theme or port in `.streamlit/config.toml`
 - **Troubleshooting**:
   - Permission errors on Linux? Add user to `docker` group
-  - Windows issues? Ensure virtualization is enabled in BIOS
+  - Windows issues? Ensure virtualization is enabled in the BIOS
   - Port conflict? Change `8501` to another port in both commands
 
 ### License
@@ -268,10 +268,8 @@ This project is licensed under the [MIT License](LICENSE).
 ### Contact / Support
 
 - **Anirban Chakraborty**: chakra96@msu.edu  
-- **Erin K. Purcell**: epurcell@msu.edu  
-- **Michael G. Moore**: moorem38@msu.edu
 
-For questions, bug reports, or feature requests, please open an issue in this repository or email the authors.
+For questions, bug reports, or feature requests, please open an issue in this repository or contact the authors via email.
 
 ---
 
